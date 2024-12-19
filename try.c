@@ -4,26 +4,24 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-// self implementation of printF
+// int --> str
+void intToString(int value, char *buffer) {
+  int i = 0 ;
+  int isNegative = 0 ;
 
-//%d
-int void_printfDecimal(int num) {
-    if (num == 0) {
-      putchar('0');
-      return 0;
+  if (value < 0) {
+    isNegative = 1;
+    value = -value;
     }
-    if (num < 0) {
-      putchar('-');
-      num = -num;
-    }
-    else{
-      int index = 0;
-      char array[11];  // 11 because  maximum value for a signed 32-bit integer is:2^31 -1 = 2147483647 + one space for null character \0
-      while (index > 0) {
-        putchar(array[--index]);
-      }
 
-    }
+    do {
+      buffer[i++] = value % 10 + '0' ;
+      value /= 10
+     } while (value > 0);
+
+     if (isNegative)
+
+
 
 
 
