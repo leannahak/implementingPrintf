@@ -123,11 +123,88 @@ void my_printf(const char *format, ...) {
           for (char *p = buffer; *p;p++) putchar(*p);
           break;
         }
-
-
-
-
+        case 'b' : {
+          unsigned int value = va_args(args, unsigned int);
+          char buffer[32];
+          intToBinary(value, buffer);
+          for (char *p = buffer; *p; p++) putchar(*p);
+          break;
+        }
+        case 'r' : {
+          char *str = va_arg(args, char *);
+          if (str == NULL) str = "(null)";
+          char buffer[128];
+          int i = 0;
+          while(str[i]) {
+            buffer[i] = str[i];
+            i++;
+          }
+          buffer[i] = '\0';
+          reverseString(buffer);
+          for (char*p = buffer; *p; p++) putchar(*p);
+          break;
+        }
+        case 'u': {
+          char *str = va_arg(args, char *);
+          if (str == NULL) str = "(null)";
+          char buffer[128];
+          int i = 0;
+          while (str[i]) {
+            buffer[i] = str[i];
+            i++;
+          }
+          buffer[i] = '\0';
+          stringToUpper(buffer);
+          for (char *p = buffer; *p; p++) putchar(*p);
+          break;
+        }
+        case 'c': {
+          char *str= va_arg(args, char *);
+          char c = (char) va_arg(args, int);
+          for (int i = 0; i< width-1; i++) putchar(' ');
+          putchar(c);
+          break;
+        }
+        case 's' : {
+          char *str = va_arg(args, char *);
+          if (str == NULL) str = "(null)";
+          int len = 0
+          while (str[len]) len++;
+          for (int i=0; i< width-len;i++) putchar(' ');
+          while (*str) putchar(*str++);
+          break;
+        }
+        default:
+          putchar('%');
+        putchar(*format);
+        break;
       }
+    } else {
+      putchar(*format); // Print regular characters
+    }
+    format++;
+  }
+
+  va_end(args);
+  return 0; // Success
+}
+int main() {
+  my_printf("Decimal: %5d\n", 123);
+  my_printf("Hexadecimal: %8x\n", 255);
+  my_printf("Binary: %b\n", 7);           // 111
+  my_printf("Reverse: %r\n", "Hello");    // olleH
+  my_printf("Uppercase: %u\n", "world");  // WORLD
+  my_printf("Character: %3c\n", 'A');
+  my_printf("String: %10s\n", "Hi!");
+  my_printf("String (null): %8s\n", NULL);
+  return 0;
+}
+
+
+
+
+
+
 
 
 
