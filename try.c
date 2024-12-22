@@ -19,7 +19,7 @@ void intToString(int value, char *buffer) {
       value /= 10;
      } while (value > 0);
 
-     if (isNegative) buffer[i++] = "-";
+     if (isNegative) buffer[i++] = '-';
      buffer[i] = '\0';
 
      for (int j =0 , k= i-1; j<k ; j++,k--) {
@@ -124,7 +124,7 @@ void my_printf(const char *format, ...) {
           break;
         }
         case 'b' : {
-          unsigned int value = va_args(args, unsigned int);
+          unsigned int value = va_arg(args, unsigned int);
           char buffer[32];
           intToBinary(value, buffer);
           for (char *p = buffer; *p; p++) putchar(*p);
@@ -168,7 +168,7 @@ void my_printf(const char *format, ...) {
         case 's' : {
           char *str = va_arg(args, char *);
           if (str == NULL) str = "(null)";
-          int len = 0
+          int len = 0;
           while (str[len]) len++;
           for (int i=0; i< width-len;i++) putchar(' ');
           while (*str) putchar(*str++);
@@ -186,19 +186,116 @@ void my_printf(const char *format, ...) {
   }
 
   va_end(args);
-  return 0; // Success
+  return; // Success
 }
 int main() {
-  my_printf("Decimal: %5d\n", 123);
-  my_printf("Hexadecimal: %8x\n", 255);
-  my_printf("Binary: %b\n", 7);           // 111
-  my_printf("Reverse: %r\n", "Hello");    // olleH
-  my_printf("Uppercase: %u\n", "world");  // WORLD
-  my_printf("Character: %3c\n", 'A');
-  my_printf("String: %10s\n", "Hi!");
-  my_printf("String (null): %8s\n", NULL);
-  return 0;
+    printf("===== Testing my_printf =====\n");
+
+    // Integer Conversion Tests
+    printf("Test Integer Positive: ");
+    my_printf("Expected: '  123', Output: '%5d'\n", 123);
+
+    printf("Test Integer Negative: ");
+    my_printf("Expected: ' -123', Output: '%5d'\n", -123);
+
+    printf("Test Integer Zero: ");
+    my_printf("Expected: '    0', Output: '%5d'\n", 0);
+
+    printf("Test Integer No Width: ");
+    my_printf("Expected: '456', Output: '%d'\n", 456);
+
+    // Hexadecimal Conversion Tests
+    printf("Test Hex Positive: ");
+    my_printf("Expected: '000000ff', Output: '%08x'\n", 255);
+
+    printf("Test Hex Large: ");
+    my_printf("Expected: '   ffff', Output: '%8x'\n", 65535);
+
+    printf("Test Hex Zero: ");
+    my_printf("Expected: '0', Output: '%x'\n", 0);
+
+    // Binary Conversion Tests
+    printf("Test Binary Small: ");
+    my_printf("Expected: '111', Output: '%b'\n", 7);
+
+    printf("Test Binary Large: ");
+    my_printf("Expected: '1111111111', Output: '%b'\n", 1023);
+
+    printf("Test Binary Zero: ");
+    my_printf("Expected: '0', Output: '%b'\n", 0);
+
+    // Reverse String Tests
+    printf("Test Reverse Normal: ");
+    my_printf("Expected: 'olleH', Output: '%r'\n", "Hello");
+
+    printf("Test Reverse Empty: ");
+    my_printf("Expected: '', Output: '%r'\n", "");
+
+    printf("Test Reverse Null: ");
+    my_printf("Expected: '(null)', Output: '%r'\n", NULL);
+
+    // Uppercase String Tests
+    printf("Test Uppercase Normal: ");
+    my_printf("Expected: 'WORLD', Output: '%u'\n", "world");
+
+    printf("Test Uppercase Mixed: ");
+    my_printf("Expected: 'HELLO123', Output: '%u'\n", "hElLo123");
+
+    printf("Test Uppercase Empty: ");
+    my_printf("Expected: '', Output: '%u'\n", "");
+
+    printf("Test Uppercase Null: ");
+    my_printf("Expected: '(null)', Output: '%u'\n", NULL);
+
+    // Character Tests
+    printf("Test Character Simple: ");
+    my_printf("Expected: 'A', Output: '%c'\n", 'A');
+
+    printf("Test Character Padded: ");
+    my_printf("Expected: '    B', Output: '%5c'\n", 'B');
+
+    printf("Test Character Zero Width: ");
+    my_printf("Expected: 'Z', Output: '%c'\n", 'Z');
+
+    // String Tests
+    printf("Test String Normal: ");
+    my_printf("Expected: '       Hi!', Output: '%10s'\n", "Hi!");
+
+    printf("Test String Short: ");
+    my_printf("Expected: 'Hi!', Output: '%2s'\n", "Hi!");
+
+    printf("Test String Exact Width: ");
+    my_printf("Expected: 'Hey', Output: '%3s'\n", "Hey");
+
+    printf("Test String Null: ");
+    my_printf("Expected: '(null)', Output: '%8s'\n", NULL);
+
+    printf("Test String Empty: ");
+    my_printf("Expected: '', Output: '%5s'\n", "");
+
+    // Mixed Formatting Tests
+    printf("Test Mixed Formatting: ");
+    my_printf("Expected: '   42 |      ff |     X |    Mixed!', Output: '%5d | %8x | %5c | %10s'\n", 42, 255, 'X', "Mixed!");
+
+    // Edge Case Tests
+    printf("Test Large Decimal: ");
+    my_printf("Expected: '2147483647', Output: '%d'\n", 2147483647); // INT_MAX
+
+    printf("Test Small Decimal: ");
+    my_printf("Expected: '-2147483648', Output: '%d'\n", -2147483648); // INT_MIN
+
+    printf("Test Large Hexadecimal: ");
+    my_printf("Expected: 'ffffffff', Output: '%x'\n", 4294967295U); // UINT_MAX
+
+    printf("Test Large Binary: ");
+    my_printf("Expected: '1111111111111111', Output: '%b'\n", 65535);
+
+    printf("===== Tests Completed =====\n");
+
+    return 0;
 }
+
+
 
 
 
