@@ -159,7 +159,7 @@ void my_printf(const char *format, ...) {
           break;
         }
         case 'c': {
-          char *str= va_arg(args, char *);
+          //char *str= va_arg(args, char *);
           char c = (char) va_arg(args, int);
           for (int i = 0; i< width-1; i++) putchar(' ');
           putchar(c);
