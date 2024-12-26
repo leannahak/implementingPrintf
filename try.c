@@ -1,27 +1,28 @@
+
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
 
 // Error codes
-#define SUCCESS 0
-#define NULL_POINTER_ERROR 1
-#define BUFFER_SIZE_ERROR 2
+#define success 0
+#define nullPointerError 1
+#define bufferSizeError 2
 
-// Helper macros to define limits manually
+// defining limits to help with testing
 #define INT_MIN (-2147483648)
-#define INT_MAX 2147483647
+#define INT_MAX (2147483647)
 
-// int --> str
+// int --> str conversion
 int intToString(int value, char *buffer, size_t bufferSize) {
-    if (!buffer || bufferSize < 2) return NULL_POINTER_ERROR;
+    if (!buffer || bufferSize < 2) return nullPointerError;
 
     int i = 0;
     int isNegative = 0;
 
     if (value == INT_MIN) { // Handle INT_MIN explicitly
-        if (bufferSize < 12) return BUFFER_SIZE_ERROR; // Minimum size for "-2147483648"
+        if (bufferSize < 12) return bufferSizeError; // Minimum size for "-2147483648"
         strcpy(buffer, "-2147483648");
-        return SUCCESS;
+        return success;
     }
 
     if (value < 0) {
@@ -30,13 +31,13 @@ int intToString(int value, char *buffer, size_t bufferSize) {
     }
 
     do {
-        if (i >= bufferSize - 1) return BUFFER_SIZE_ERROR; // Prevent overflow
+        if (i >= bufferSize - 1) return bufferSizeError; // Prevent overflow
         buffer[i++] = value % 10 + '0';
         value /= 10;
     } while (value > 0);
 
     if (isNegative) {
-        if (i >= bufferSize - 1) return BUFFER_SIZE_ERROR; // Prevent overflow
+        if (i >= bufferSize - 1) return bufferSizeError; // Prevent overflow
         buffer[i++] = '-';
     }
 
@@ -48,18 +49,18 @@ int intToString(int value, char *buffer, size_t bufferSize) {
         buffer[k] = temp;
     }
 
-    return SUCCESS;
+    return success;
 }
 
-// int --> hex
+// int --> hex conversion
 int intToHex(unsigned int value, char *buffer, size_t bufferSize) {
-    if (!buffer || bufferSize < 2) return NULL_POINTER_ERROR;
+    if (!buffer || bufferSize < 2) return nullPointerError;
 
     const char *hexChars = "0123456789abcdef";
     int i = 0;
 
     do {
-        if (i >= bufferSize - 1) return BUFFER_SIZE_ERROR; // Prevent overflow
+        if (i >= bufferSize - 1) return bufferSizeError; // Prevent overflow
         buffer[i++] = hexChars[value % 16];
         value /= 16;
     } while (value > 0);
@@ -72,14 +73,14 @@ int intToHex(unsigned int value, char *buffer, size_t bufferSize) {
         buffer[k] = temp;
     }
 
-    return SUCCESS;
+    return success;
 }
 
-// reverse an inputted string
+// creative function to reverse an inputted string
 int reverseString(char *str) {
-    if (!str) return NULL_POINTER_ERROR;
+    if (!str) return nullPointerError;
 
-    if (strcmp(str, "(null)") == 0) return SUCCESS; // Do not reverse "(null)"
+    if (strcmp(str, "(null)") == 0) return success; // Do not reverse "(null)"
 
     int len = 0;
     while (str[len]) len++;
@@ -90,12 +91,12 @@ int reverseString(char *str) {
         str[j] = temp;
     }
 
-    return SUCCESS;
+    return success;
 }
 
-// convert inputted string to uppercase
+// creative function to convert inputted string to uppercase
 int stringToUpper(char *str) {
-    if (!str) return NULL_POINTER_ERROR;
+    if (!str) return nullPointerError;
 
     while (*str) {
         if (*str >= 'a' && *str <= 'z') {
@@ -104,17 +105,17 @@ int stringToUpper(char *str) {
         str++;
     }
 
-    return SUCCESS;
+    return success;
 }
 
-// int --> binary
+// creative function to convert int --> binary
 int intToBinary(unsigned int value, char *buffer, size_t bufferSize) {
-    if (!buffer || bufferSize < 2) return NULL_POINTER_ERROR;
+    if (!buffer || bufferSize < 2) return nullPointerError;
 
     int i = 0;
 
     do {
-        if (i >= bufferSize - 1) return BUFFER_SIZE_ERROR; // Prevent overflow
+        if (i >= bufferSize - 1) return bufferSizeError; // Prevent overflow
         buffer[i++] = (value % 2) + '0';
         value /= 2;
     } while (value > 0);
@@ -127,7 +128,7 @@ int intToBinary(unsigned int value, char *buffer, size_t bufferSize) {
         buffer[k] = temp;
     }
 
-    return SUCCESS;
+    return success;
 }
 
 // custom printf implementation using putchar
@@ -146,13 +147,13 @@ int my_printf(const char *format, ...) {
             }
 
             char buffer[128];
-            int result = SUCCESS;
+            int result = success;
 
             switch (*format) {
                 case 'd': {
                     int value = va_arg(args, int);
                     result = intToString(value, buffer, sizeof(buffer));
-                    if (result == SUCCESS) {
+                    if (result == success) {
                         int len = strlen(buffer);
                         for (int i = 0; i < width - len; i++) putchar(' ');
                         for (char *p = buffer; *p; p++) putchar(*p);
@@ -162,7 +163,7 @@ int my_printf(const char *format, ...) {
                 case 'x': {
                     unsigned int value = va_arg(args, unsigned int);
                     result = intToHex(value, buffer, sizeof(buffer));
-                    if (result == SUCCESS) {
+                    if (result == success) {
                         int len = strlen(buffer);
                         for (int i = 0; i < width - len; i++) putchar(' ');
                         for (char *p = buffer; *p; p++) putchar(*p);
@@ -172,7 +173,7 @@ int my_printf(const char *format, ...) {
                 case 'b': {
                     unsigned int value = va_arg(args, unsigned int);
                     result = intToBinary(value, buffer, sizeof(buffer));
-                    if (result == SUCCESS) {
+                    if (result == success) {
                         for (char *p = buffer; *p; p++) putchar(*p);
                     }
                     break;
@@ -183,7 +184,7 @@ int my_printf(const char *format, ...) {
                     strncpy(buffer, str, sizeof(buffer) - 1);
                     buffer[sizeof(buffer) - 1] = '\0';
                     result = reverseString(buffer);
-                    if (result == SUCCESS) {
+                    if (result == success) {
                         for (char *p = buffer; *p; p++) putchar(*p);
                     }
                     break;
@@ -198,7 +199,7 @@ int my_printf(const char *format, ...) {
                         strncpy(buffer, str, sizeof(buffer) - 1);
                         buffer[sizeof(buffer) - 1] = '\0';
                         result = stringToUpper(buffer);
-                        if (result == SUCCESS) {
+                        if (result == success) {
                             for (char *p = buffer; *p; p++) putchar(*p);
                         }
 
@@ -234,7 +235,7 @@ int my_printf(const char *format, ...) {
     }
 
     va_end(args);
-    return SUCCESS;
+    return success;
 }
 
 // Main function with tests
@@ -246,32 +247,58 @@ int main() {
     my_printf("Test Integer Negative: Expected: ' -123', Output: '%5d'\n", -123);
     my_printf("Test Integer Zero: Expected: '    0', Output: '%5d'\n", 0);
     my_printf("Test Integer No Width: Expected: '456', Output: '%d'\n", 456);
+    my_printf("Test Integer Zero Padding: Expected: '   42', Output: '%05d'\n", 42);
+    my_printf("Test Integer Large Positive: Expected: '2147483647', Output: '%d'\n", INT_MAX); // Largest positive integer
+    my_printf("Test Integer Small Negative: Expected: '-2147483648', Output: '%d'\n", INT_MIN); // Smallest negative integer
+    my_printf("=====================================================================================================\n");
+
 
     // Hexadecimal Conversion Tests
     my_printf("Test Hex Positive: Expected: '      ff', Output: '%08x'\n", 255);
     my_printf("Test Hex Large: Expected: '   ffff', Output: '%8x'\n", 65535);
     my_printf("Test Hex Zero: Expected: '0', Output: '%x'\n", 0);
+    my_printf("Test Hex No Padding: Expected: 'ff', Output: '%x'\n", 255);
+    my_printf("=====================================================================================================\n");
+
+
 
     // Binary Conversion Tests
     my_printf("Test Binary Small: Expected: '111', Output: '%b'\n", 7);
     my_printf("Test Binary Large: Expected: '1111111111', Output: '%b'\n", 1023);
-    my_printf("Test Binary Zero: Expected: '0', Output: '%b'\n", 0);
+    my_printf("Test Binary Edge case - Zero: Expected: '0', Output: '%b'\n", 0);
+    my_printf("Test Binary  Extra Large Value: Expected: '1111111111111111111111111111111', Output: '%b'\n", 2147483647); // Max binary
+    my_printf("=====================================================================================================\n");
+
+
 
     // Reverse String Tests
     my_printf("Test Reverse Normal: Expected: 'olleH', Output: '%r'\n", "Hello");
     my_printf("Test Reverse Empty: Expected: '', Output: '%r'\n", "");
     my_printf("Test Reverse Null: Expected: '(null)', Output: '%r'\n", NULL);
+    my_printf("Test Reverse kinda palindrome: Expected: 'Racecar', Output: '%r'\n", "racecaR");
+    my_printf("Test Reverse Special Characters: Expected: '&*$#', Output: '%r'\n", "#$*&"); // Special characters
+    my_printf("=====================================================================================================\n");
+
+
+
 
     // Uppercase String Tests
     my_printf("Test Uppercase Normal: Expected: 'WORLD', Output: '%u'\n", "world");
     my_printf("Test Uppercase Mixed: Expected: 'HELLO123', Output: '%u'\n", "hElLo123");
     my_printf("Test Uppercase Empty: Expected: '', Output: '%u'\n", "");
     my_printf("Test Uppercase Null: Expected: '(null)', Output: '%u'\n", NULL);
+    my_printf("Test Uppercase Mixed Case: Expected: 'MIXCASE', Output: '%u'\n", "mixcaSE");
+    my_printf("=====================================================================================================\n");
+
+
 
     // Character Tests
     my_printf("Test Character Simple: Expected: 'A', Output: '%c'\n", 'A');
     my_printf("Test Character Padded: Expected: '    B', Output: '%5c'\n", 'B');
     my_printf("Test Character Zero Width: Expected: 'Z', Output: '%c'\n", 'Z');
+    my_printf("=====================================================================================================\n");
+
+
 
     // String Tests
     my_printf("Test String Normal: Expected: '       Hi!', Output: '%10s'\n", "Hi!");
@@ -279,9 +306,15 @@ int main() {
     my_printf("Test String Exact Width: Expected: 'Hey', Output: '%3s'\n", "Hey");
     my_printf("Test String Null: Expected: '(null)', Output: '%8s'\n", NULL);
     my_printf("Test String Empty: Expected: '', Output: '%5s'\n", "");
+    my_printf("Test String Long Input: Expected: 'LongStringTest', Output: '%s'\n", "LongStringTest"); // Long input
+    my_printf("=====================================================================================================\n");
+
+
 
     // Mixed Formatting Tests
     my_printf("Test Mixed Formatting: Expected: '   42 |      ff |     X |    Mixed!', Output: '%5d | %8x | %5c | %10s'\n", 42, 255, 'X', "Mixed!");
+    my_printf("=====================================================================================================\n");
+
 
     // Edge Case Tests
     my_printf("Test Large Decimal: Expected: '2147483647', Output: '%d'\n", 2147483647); // INT_MAX
