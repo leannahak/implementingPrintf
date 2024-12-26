@@ -7,12 +7,22 @@
 #define NULL_POINTER_ERROR 1
 #define BUFFER_SIZE_ERROR 2
 
+// Helper macros to define limits manually
+#define INT_MIN (-2147483648)
+#define INT_MAX 2147483647
+
 // int --> str
 int intToString(int value, char *buffer, size_t bufferSize) {
     if (!buffer || bufferSize < 2) return NULL_POINTER_ERROR;
 
     int i = 0;
     int isNegative = 0;
+
+    if (value == INT_MIN) { // Handle INT_MIN explicitly
+        if (bufferSize < 12) return BUFFER_SIZE_ERROR; // Minimum size for "-2147483648"
+        strcpy(buffer, "-2147483648");
+        return SUCCESS;
+    }
 
     if (value < 0) {
         isNegative = 1;
@@ -68,6 +78,8 @@ int intToHex(unsigned int value, char *buffer, size_t bufferSize) {
 // reverse an inputted string
 int reverseString(char *str) {
     if (!str) return NULL_POINTER_ERROR;
+
+    if (strcmp(str, "(null)") == 0) return SUCCESS; // Do not reverse "(null)"
 
     int len = 0;
     while (str[len]) len++;
@@ -178,17 +190,25 @@ int my_printf(const char *format, ...) {
                 }
                 case 'u': {
                     char *str = va_arg(args, char *);
-                    if (str == NULL) str = "(null)";
-                    strncpy(buffer, str, sizeof(buffer) - 1);
-                    buffer[sizeof(buffer) - 1] = '\0';
-                    result = stringToUpper(buffer);
-                    if (result == SUCCESS) {
-                        for (char *p = buffer; *p; p++) putchar(*p);
+                    if (str == NULL) {
+                        str = "(null)";
+                        for (const char *p = str; *p; p++) putchar(*p);
+                    }
+                    else {
+                        strncpy(buffer, str, sizeof(buffer) - 1);
+                        buffer[sizeof(buffer) - 1] = '\0';
+                        result = stringToUpper(buffer);
+                        if (result == SUCCESS) {
+                            for (char *p = buffer; *p; p++) putchar(*p);
+                        }
+
                     }
                     break;
+
                 }
                 case 'c': {
                     char c = (char)va_arg(args, int);
+                    for (int i = 0; i < width - 1; i++) putchar(' ');
                     putchar(c);
                     break;
                 }
@@ -197,6 +217,8 @@ int my_printf(const char *format, ...) {
                     if (str == NULL) str = "(null)";
                     strncpy(buffer, str, sizeof(buffer) - 1);
                     buffer[sizeof(buffer) - 1] = '\0';
+                    int len = strlen(buffer);
+                    for (int i = 0; i < width - len; i++) putchar(' ');
                     for (char *p = buffer; *p; p++) putchar(*p);
                     break;
                 }
