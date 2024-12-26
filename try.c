@@ -3,6 +3,12 @@
 //
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
+#include <assert.h>
+
+#define SUCCESS 0
+#define NULL_POINTER_ERROR 1
+#define BUFFER_SIZE_ERROR 2
 
 // int --> str
 void intToString(int value, char *buffer) {
