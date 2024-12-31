@@ -157,7 +157,7 @@ int main() {
     // Mixed Tests
     my_printf("Test Mixed: Expected: '  +42 |    0xff | Mix       ', Output: '%+5d | %#8x | %-10s'\n", 42, 255, "Mix");
 
-    my_printf("===== Tests Completed :)  =====\n");
+    my_printf("===== Tests Completed :)  ======\n");
 
 
     return 0;
