@@ -1,9 +1,9 @@
 // used libraries
-#include <stdarg.h>
+#include <stdarg.h> // given permission
 #include <stdio.h>
-#include <string.h>
+#include <string.h> // given permission
 
-// Error codes
+// error codes
 #define success 0
 #define nullPointerError 1
 #define bufferSizeError 2
@@ -147,31 +147,47 @@ int intToBinary(unsigned int value, char *buffer, size_t bufferSize) {
 
 // custom printf implementation using putchar
 int my_printf(const char *input, ...) {
-    if (!input) return -1; // Handle null input string
+    if (!input) return -1; // handle null input string
 
     va_list args;     // variable argument list
     va_start(args, input); // initialize that list
 
-    int totalPrinted = 0; // Counter for the total characters printed, to ensure we handle errors like printf
+    int totalPrinted = 0; // counter for the total characters printed, to ensure we handle errors like printf
 
+    // continues until end of input string
     while (*input) {
-        if (*input == '%') { // input specifier handling
-            input++;
 
-            int isLeftAlign = 0, isZeroPad = 0, showSign = 0, addSpace = 0, isAlternate = 0;
+        if (*input == '%') { // input specifier handling
+            input++; // move to next char to see what the specifier is
+
+            //initialize the flags we will use to change behavior
+            int isLeftAlign = 0;
+            int isZeroPad = 0;
+            int showSign = 0;
+            int addSpace = 0;
+            int isAlternate = 0;
             while (*input == '-' || *input == '+' || *input == ' ' || *input == '0' || *input == '#') {
+                // - sighn allows left alighnment
                 if (*input == '-') isLeftAlign = 1;
+
+                //+ flags makes + symbol printed b4 pos nums
                 else if (*input == '+') showSign = 1;
+
+                // adds space b4 pos nums if no + used
                 else if (*input == ' ') addSpace = 1;
+
+                // zero padding instead of space padding
                 else if (*input == '0') isZeroPad = 1;
+
+                //uses alt form
                 else if (*input == '#') isAlternate = 1;
                 input++;
             }
-            if (isLeftAlign) isZeroPad = 0; // '-' overrides '0'
+            if (isLeftAlign) isZeroPad = 0; // '-' instead of  '0'
 
             // Parse width
             int width = 0; // field width for inputting
-            while (*input >= '0' && *input <= '9') {
+            while (*input >= '0' && *input <= '9') { //c heck is cur character is a digit
                 width = width * 10 + (*input - '0'); // parse the width
                 input++;
             }
@@ -181,11 +197,11 @@ int my_printf(const char *input, ...) {
 
             switch (*input) {
                 case 'd': {
-                    int value = va_arg(args, int); // get argument
+                    int value = va_arg(args, int); // get next argument
                     result = intToString(value, buffer, sizeof(buffer)); // Convert to string
                     if (result == bufferSizeError) return -1; // handle buffer overflow
 
-                    if (result != success) return -1;
+                    if (result != success) return -1; // handles error
 
                     int len = strlen(buffer);
 
@@ -193,22 +209,39 @@ int my_printf(const char *input, ...) {
                         return -1; // Return error for buffer overflow
                     }
 
-                    if (value >= 0 && showSign) { putchar('+'); totalPrinted++; }
-                    else if (value >= 0 && addSpace) { putchar(' '); totalPrinted++; }
+                    if (value >= 0 && showSign) {//if num is pos and '+' flag is set
+                        putchar('+'); totalPrinted++;
+                    }
+                    else if (value >= 0 && addSpace) { //if num is pos and ' ' flag is set
+                        putchar(' '); totalPrinted++;
+                    }
 
                     if (width > len) {
+                        // calculate needed padding based on the width length of the string and flags
                         int padding = width - len - (value >= 0 && (showSign || addSpace));
-                        if (isZeroPad && !isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar('0'); totalPrinted++; }
-                        } else if (!isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar(' '); totalPrinted++; }
+                        if (isZeroPad && !isLeftAlign) { // pad with zeroes
+                            for (int i = 0; i < padding; i++) {
+                                putchar('0'); totalPrinted++;
+                            }
+                        } else if (!isLeftAlign) { // pad with spaces
+                            for (int i = 0; i < padding; i++) {
+                                putchar(' ');
+                                totalPrinted++;
+                            }
                         }
                     }
 
-                    for (char *p = buffer; *p; p++) { putchar(*p); totalPrinted++; }
+                    for (char *p = buffer; *p; p++) {
+                        putchar(*p);
+                        totalPrinted++;
+                    }
 
+                    // if '-' flag not set pad with ' '
                     if (isLeftAlign && width > len) {
-                        for (int i = len; i < width; i++) { putchar(' '); totalPrinted++; }
+                        for (int i = len; i < width; i++) {
+                            putchar(' ');
+                            totalPrinted++;
+                        }
                     }
                     break;
                 }
@@ -227,39 +260,63 @@ int my_printf(const char *input, ...) {
                     if (width > len) {
                         int padding = width - len - (isAlternate && value != 0 ? 2 : 0);
                         if (isZeroPad && !isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar('0'); totalPrinted++; }
+                            for (int i = 0; i < padding; i++) {
+                                putchar('0');
+                                totalPrinted++;
+                            }
                         } else if (!isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar(' '); totalPrinted++; }
+                            for (int i = 0; i < padding; i++) {
+                                putchar(' ');
+                                totalPrinted++;
+                            }
                         }
                     }
 
-                    for (char *p = buffer; *p; p++) { putchar(*p); totalPrinted++; }
+                    for (char *p = buffer; *p; p++) {
+                        putchar(*p);
+                        totalPrinted++;
+                    }
 
                     if (isLeftAlign && width > len) {
-                        for (int i = len; i < width; i++) { putchar(' '); totalPrinted++; }
+                        for (int i = len; i < width; i++) {
+                            putchar(' ');
+                            totalPrinted++;
+                        }
                     }
                     break;
                 }
                 case 'b': {
                     unsigned int value = va_arg(args, unsigned int); //unsigned int argument
                     result = intToBinary(value, buffer, sizeof(buffer)); //convert to binary
-                    if (result == bufferSizeError) return -1; // Handle buffer overflow
+                    if (result == bufferSizeError) return -1; // handle buffer overflow
 
-                    if (result != success) return -1; // Handle errors in intToBinary
+                    if (result != success) return -1; // handle errors in intToBinary
 
                     int len = strlen(buffer);
 
                     if (width > len) {
+                        // calc req padding
                         int padding = width - len;
+                        // if '-' flag not set pad with ' '
                         if (!isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar(' '); totalPrinted++; }
+                            for (int i = 0; i < padding; i++) {
+                                putchar(' ');
+                                totalPrinted++;
+                            }
                         }
                     }
 
-                    for (char *p = buffer; *p; p++) { putchar(*p); totalPrinted++; }
+                    //print chars in the buffer
+                    for (char *p = buffer; *p; p++) {
+                        putchar(*p);
+                        totalPrinted++;
+                    }
 
                     if (isLeftAlign && width > len) {
-                        for (int i = len; i < width; i++) { putchar(' '); totalPrinted++; }
+                        for (int i = len; i < width; i++) {
+                            putchar(' ');
+                            totalPrinted++;
+                        }
                     }
                     break;
                 }
@@ -270,23 +327,25 @@ int my_printf(const char *input, ...) {
                     buffer[sizeof(buffer) - 1] = '\0'; // null terminate
                     if (strcmp(str, "(null)") != 0) {
                         result = reverseString(buffer); //reverse the str
-                        if (result != success) return -1; // Handle errors in reverseString
+                        if (result != success) return -1; // handle errors in reverseString
                     }
 
-                    for (char *p = buffer; *p; p++) { putchar(*p); totalPrinted++; }
+                    for (char *p = buffer; *p; p++) {
+                        putchar(*p); totalPrinted++;
+                    }
                     break;
                 }
                 case 'u': {
-                    char *str = va_arg(args, char *); // Get str argument
-                    if (!str) str = "(null)";// Handle null string
+                    char *str = va_arg(args, char *); // get str argument
+                    if (!str) str = "(null)";// handle null string
 
-                    if (strcmp(str,"(null)") == 0) {
+                    if (strcmp(str,"(null)") == 0) { // if null sting just print "(null)"
                         for (const char *p = str; *p; p++) {
                             putchar(*p);
                             totalPrinted++;
                         }
 
-                    }else {
+                    }else {  // if not null string
                         strncpy(buffer, str, sizeof(buffer) - 1);
                         buffer[sizeof(buffer) - 1] = '\0';
                         result = stringToUpper(buffer); //convert to upper
@@ -301,46 +360,63 @@ int my_printf(const char *input, ...) {
                     break;
                 }
                 case 'c': {
-                    char c = (char)va_arg(args, int); //get the char argument
+                    char c = (char)va_arg(args, int); //get the char argument made into int
 
-                    // handles output inputting for when width is specified
+                    // output format  when width is specified
                     if (width > 1) {
-                        int padding = width - 1;
-                        char padChar = isZeroPad ? '0' : ' ';
-                        if (!isLeftAlign) {
-                            for (int i = 0; i < padding; i++) { putchar(padChar); totalPrinted++; }
+                        int padding = width - 1; // calc how much padding req
+                        char padChar = isZeroPad ? '0' : ' '; // if zero flag is set use '0' else: ' '
+                        if (!isLeftAlign) { // if '-' not set then  do padding on the left
+                            for (int i = 0; i < padding; i++) {
+                                putchar(padChar);
+                                totalPrinted++;
+                            }
                         }
                     }
-                    putchar(c); totalPrinted++;
+                    putchar(c); totalPrinted++; // print char and inc char count
+
+                    // if the '-' flag  set and the width > 1
 
                     if (width > 1 && isLeftAlign) {
-                        for (int i = 0; i < width - 1; i++) { putchar(' '); totalPrinted++; }
+                        for (int i = 0; i < width - 1; i++) {
+                            putchar(' ');
+                            totalPrinted++;
+                        }
                     }
                     break;
                 }
                 case 's': {
                     char *str = va_arg(args, char *); //get str argument
-                    if (!str) str = "(null)"; //null str handling
+                    if (!str) str = "(null)"; //null str case
                     int len = strlen(str); // str length
 
                     if (strcmp(str, "(null)" ) == 0) {
-                        // Skip width logic for NULL strings
-                        for (const char *p = str; *p; p++) { putchar(*p); totalPrinted++; }
-                    } else {
-                        if (width > len && !isLeftAlign) {
-                            for (int i = 0; i < width - len; i++) { putchar(' '); totalPrinted++; }
+                        // skip width logic for NULL strings, and just output
+                        for (const char *p = str; *p; p++) {
+                            putchar(*p); totalPrinted++;
+                        }
+                    } else { // string not null
+                        if (width > len && !isLeftAlign) { // pad with space to meet width
+                            for (int i = 0; i < width - len; i++) {
+                                putchar(' '); totalPrinted++;
+                            }
                         }
 
-                        for (char *p = str; *p; p++) { putchar(*p); totalPrinted++; }
+                        for (char *p = str; *p; p++) {
+                            putchar(*p); totalPrinted++;
+                        } // print str and inc char count
 
-                        if (width > len && isLeftAlign) {
-                            for (int i = 0; i < width - len; i++) { putchar(' '); totalPrinted++; }
+                        if (width > len && isLeftAlign) { // if width > str len and '-' set --> pad ' '
+
+                            for (int i = 0; i < width - len; i++) {
+                                putchar(' '); totalPrinted++;
+                            }
                         }
                     }
                     break;
                 }
                 default: // handling the input specifiers not supported in this implementation
-                    // regualr printf in c handles invalid specifiers in many diff ways depending on the situation so this is how i decided to work with it
+                    // regular printf in c handles invalid specifiers in many diff ways depending on the situation so this is how i decided to work with it
                     putchar('%'); totalPrinted++;
                     putchar(*input); totalPrinted++;
                     break;

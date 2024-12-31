@@ -1,6 +1,4 @@
-//
-// Created by hakakian on 12/31/24.
-//
+
 // used libraries
 #include <stdarg.h>
 #include <stdio.h>
@@ -105,7 +103,7 @@ int main() {
     my_printf("Test Large Binary: Expected: '1111111111111111', Output: '%b'\n", 65535);
     my_printf("=====================================================================================================\n");
 
-    //error tests?
+    //error tests
     int result = my_printf(NULL); // Passing NULL to simulate an error
     my_printf("Result: %d (Expected: -1 for null input string)\n", result);
 
@@ -116,6 +114,11 @@ int main() {
     my_printf("Result: %d (Expected: -1 for buffer overflow)\n", test3);
 
     my_printf("Test Large Decimal: Expected: '2147483647', Output: '%d'\n", 2147483647); // INT_MAX
+
+    int overflow1 = my_printf("%1d\n", INT_MIN); // INT_MIN needs more than 1 space
+    my_printf("Result: %d (Expected: -1 for buffer overflow)\n", overflow1);
+
+    my_printf("Test Unsupported Specifier: Expected: 'This is invalid: %%z', Output: 'This is invalid: %%z'\n");
 
     my_printf("=================================================================================================\n");
     my_printf("===== Testing my_printf with Flags =====\n");
@@ -156,6 +159,15 @@ int main() {
 
     // Mixed Tests
     my_printf("Test Mixed: Expected: '  +42 |    0xff | Mix       ', Output: '%+5d | %#8x | %-10s'\n", 42, 255, "Mix");
+
+    // Complex Flag Combinations
+    my_printf("Test Flags + Width (Integer): Expected: '+0042', Output: '%+05d'\n", 42);
+    my_printf("Test Flags + Width (Hex): Expected: '0x00001f', Output: '%#08x'\n", 31);
+    my_printf("Test Special Characters: Expected: '!@#$%^&*()', Output: '%s'\n", "!@#$%^&*()");
+    my_printf("Test Large Width (Integer): Expected: '          42', Output: '%12d'\n", 42);
+
+    my_printf("=====================================================================================================\n");
+
 
     my_printf("===== Tests Completed :)  ======\n");
 
